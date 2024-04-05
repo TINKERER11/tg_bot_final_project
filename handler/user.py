@@ -16,12 +16,17 @@ class UserState(telebot.handler_backends.StatesGroup):
 
 @bot.message_handler(commands=['start'])
 def start(message: telebot.types.Message):
+    text = ("/get_question - ответить на вопрос\n"
+            "/my_statistic - моя статистика\n"
+            "/total_statistic - общая статистика\n"
+            "/add_question - добавить вопрос\n"
+            "/delete_question - удалить вопрос")
     bot.send_message(message.from_user.id, text=f"Привет, {message.from_user.first_name}!\n"
                                                 f"Этот бот создан для <i>прохождения опроса</i>.\n"
-                                                f"<b>В меню бота</b> представлены оновные команды.", parse_mode='HTML')
+                                                f"{text}", parse_mode='HTML')
 
 
-@bot.message_handler(commands=['create_question'])
+@bot.message_handler(commands=['add_question'])
 def create_quiz(message: telebot.types.Message):
     user_id = int(message.from_user.id)
     if len(prov_admin(user_id)) == 0:
@@ -80,9 +85,11 @@ def state_1(message: telebot.types.Message):
         n = int(data['num'])
     except ValueError:
         bot.send_message(message.from_user.id, text="Вы ввели не число!")
+        bot.delete_state(message.from_user.id, message.chat.id)
     else:
         if n <= 0 or len(poisk_quest(n)) == 0:
             bot.send_message(message.from_user.id, text="Вопроса с таким номером не существует")
+            bot.delete_state(message.from_user.id, message.chat.id)
         else:
             delete_question(n)
             bot.send_message(message.from_user.id, text=f"Вопрос {n} удален")
@@ -147,3 +154,13 @@ def statistic_1(message: telebot.types.Message):
             bot.send_message(message.from_user.id, text="Статистика пустая")
         else:
             bot.send_message(message.from_user.id, text=text)
+
+
+@bot.message_handler(state='*')
+def state_kon(message: telebot.types.Message):
+    text = ("/get_question - ответить на вопрос\n"
+            "/my_statistic - моя статистика\n"
+            "/total_statistic - общая статистика\n"
+            "/add_question - добавить вопрос\n"
+            "/delete_question - удалить вопрос")
+    bot.send_message(message.from_user.id, text=text)

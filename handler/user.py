@@ -81,12 +81,11 @@ def delete_quiz(message: telebot.types.Message):
 def state_1(message: telebot.types.Message):
     with bot.retrieve_data(message.from_user.id) as data:
         data['num'] = message.text
-    try:
-        n = int(data['num'])
-    except ValueError:
+    if not data['num'].isdigit():
         bot.send_message(message.from_user.id, text="Вы ввели не число!")
         bot.delete_state(message.from_user.id, message.chat.id)
     else:
+        n = int(data['num'])
         if n <= 0 or len(poisk_quest(n)) == 0:
             bot.send_message(message.from_user.id, text="Вопроса с таким номером не существует")
             bot.delete_state(message.from_user.id, message.chat.id)
@@ -126,10 +125,11 @@ def call_b(call: telebot.types.CallbackQuery):
 def statistic(message: telebot.types.Message):
     user_id = int(message.from_user.id)
     questions, choices = get_my_statistic(user_id)
-    text = ""
+    arr = []
     for i in range(len(questions)):
-        text += f"{questions[i][0]}\nВаш ответ — {choices[i][0]}\n\n"
-    if text == "":
+        arr.append(f"{questions[i][0]}\nВаш ответ — {choices[i][0]}\n\n")
+    text = "\n".join(arr)
+    if len(text) == 0:
         bot.send_message(message.from_user.id, text="Статистика пустая")
     else:
         bot.send_message(message.from_user.id, text=text)
@@ -142,14 +142,15 @@ def statistic_1(message: telebot.types.Message):
         bot.send_message(message.from_user.id, text="У вас <b>нет доступа к этой команде</b>!\n"
                                                     "Вы <u>не администратор</u>!!!", parse_mode='HTML')
     else:
-        text = ""
+        arr = []
         questions, votes = total_statistic()
         for i in range(len(questions)):
-            text += f"{questions[i][0]}) {questions[i][1]}\n"
+            arr.append(f"{questions[i][0]}) {questions[i][1]}\n")
             for j in range(len(votes)):
                 if questions[i][0] == votes[j][0]:
-                    text += f"    {votes[j][1]} — {votes[j][2]}\n"
-            text += "\n"
+                    arr.append(f"    {votes[j][1]} — {votes[j][2]}\n")
+            arr.append("\n")
+        text = "".join(arr)
         if text == "":
             bot.send_message(message.from_user.id, text="Статистика пустая")
         else:

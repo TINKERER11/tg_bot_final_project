@@ -59,8 +59,8 @@ def state_2(message: telebot.types.Message):
     with bot.retrieve_data(message.from_user.id) as data:
         data['variants'] = message.text
     variants = data['variants'].split('\n')
-    for i in range(len(variants)):
-        save_variants(variants[i], admin_id)
+    for x in variants:
+        save_variants(x, admin_id)
     bot.send_message(message.from_user.id, text="Варианты ответов добавлены!")
     bot.delete_state(message.from_user.id, message.chat.id)
 
@@ -107,8 +107,8 @@ def begin(message: telebot.types.Message):
         variants = get_variants(question[0])
         text = f"{question[0]}) {q[0]}\n"
         markup = InlineKeyboardMarkup()
-        for i in range(len(variants)):
-            markup.add(InlineKeyboardButton(text=f"{variants[i][0]}", callback_data=f"{variants[i][1]}"))
+        for x in variants:
+            markup.add(InlineKeyboardButton(text=f"{x[0]}", callback_data=f"{x[1]}"))
         bot.send_message(message.from_user.id, text=text, reply_markup=markup)
 
 
@@ -144,11 +144,11 @@ def statistic_1(message: telebot.types.Message):
     else:
         arr = []
         questions, votes = total_statistic()
-        for i in range(len(questions)):
-            arr.append(f"{questions[i][0]}) {questions[i][1]}\n")
-            for j in range(len(votes)):
-                if questions[i][0] == votes[j][0]:
-                    arr.append(f"    {votes[j][1]} — {votes[j][2]}\n")
+        for x in questions:
+            arr.append(f"{x[0]}) {x[1]}\n")
+            for j in votes:
+                if x[0] == j[0]:
+                    arr.append(f"    {j[1]} — {j[2]}\n")
             arr.append("\n")
         text = "".join(arr)
         if text == "":

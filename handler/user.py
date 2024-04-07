@@ -2,8 +2,8 @@ import telebot
 import time
 import random
 from datetime import datetime
-from funcs.db import prov_admin, delete_question, save_question, save_variants, get_my_statistic, total_statistic, \
-    get_questions, get_variants, get_question, update_votes, update_statistic, poisk_quest
+from funcs.db import (prov_admin, delete_question, save_question, save_variants, get_my_statistic, total_statistic,
+                      get_questions, get_variants, get_question, update_votes, update_statistic, poisk_quest)
 from init_bot import bot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 

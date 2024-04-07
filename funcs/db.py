@@ -105,13 +105,13 @@ def get_my_statistic(user_id):
         cursor.execute("SELECT question_id, choice_id FROM total_statistic WHERE user_id = (%s)", (user_id, ))
         result = cursor.fetchall()
     with conn.cursor() as cursor:
-        for i in range(len(result)):
-            cursor.execute("SELECT question_text FROM questions WHERE id = (%s)", (result[i][0], ))
-            res += cursor.fetchall()
+        for x in result:
+            cursor.execute("SELECT question_text FROM questions WHERE id = (%s)", (x[0], ))
+            res.extend(cursor.fetchall())
     with conn.cursor() as cursor:
-        for i in range(len(result)):
-            cursor.execute("SELECT text FROM choices WHERE id = (%s)", (result[i][1], ))
-            res1 += cursor.fetchall()
+        for x in result:
+            cursor.execute("SELECT text FROM choices WHERE id = (%s)", (x[1], ))
+            res1.extend(cursor.fetchall())
     conn.commit()
     conn.close()
     return res, res1

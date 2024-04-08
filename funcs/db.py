@@ -67,23 +67,23 @@ def prov_admin(user_id: int) -> list:
     return result
 
 
-def save_question(s: str, admin_id, date) -> None:
+def save_question(question_text: str, admin_id, date) -> None:
     conn = connection_to_db()
     with conn.cursor() as cursor:
         cursor.execute("INSERT INTO questions (question_text, admin_id, publish_date) "
-                       "VALUES ((%s), (%s), (%s));", (s, admin_id, date))
+                       "VALUES ((%s), (%s), (%s));", (question_text, admin_id, date))
     conn.commit()
     conn.close()
 
 
-def save_variants(s: str, admin_id) -> None:
+def save_variants(choice_text: str, admin_id) -> None:
     conn = connection_to_db()
     with conn.cursor() as cursor:
         cursor.execute("SELECT max(id) from questions WHERE admin_id = (%s);", (admin_id, ))
         result = cursor.fetchone()
     question_id = result[0]
     with conn.cursor() as cursor:
-        cursor.execute("INSERT INTO choices (text, votes, question_id) VALUES ((%s), (%s), (%s))", (s, 0, question_id))
+        cursor.execute("INSERT INTO choices (text, votes, question_id) VALUES ((%s), (%s), (%s))", (choice_text, 0, question_id))
     conn.commit()
     conn.close()
 
@@ -105,12 +105,12 @@ def get_my_statistic(user_id):
         cursor.execute("SELECT question_id, choice_id FROM total_statistic WHERE user_id = (%s)", (user_id, ))
         result = cursor.fetchall()
     with conn.cursor() as cursor:
-        for x in result:
-            cursor.execute("SELECT question_text FROM questions WHERE id = (%s)", (x[0], ))
+        for question_id in result:
+            cursor.execute("SELECT question_text FROM questions WHERE id = (%s)", (question_id[0], ))
             res.extend(cursor.fetchall())
     with conn.cursor() as cursor:
-        for x in result:
-            cursor.execute("SELECT text FROM choices WHERE id = (%s)", (x[1], ))
+        for choice_id in result:
+            cursor.execute("SELECT text FROM choices WHERE id = (%s)", (choice_id[1], ))
             res1.extend(cursor.fetchall())
     conn.commit()
     conn.close()

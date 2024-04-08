@@ -44,7 +44,7 @@ def state(message: telebot.types.Message):
     new_quest = data['new_quest']
     now_date = datetime.now()
     admin_id = int(message.from_user.id)
-    save_question(s=new_quest, admin_id=admin_id, date=now_date)
+    save_question(question_text=new_quest, admin_id=admin_id, date=now_date)
     bot.send_message(message.from_user.id, text="Вопрос добавился!")
     time.sleep(1)
     bot.send_message(message.from_user.id, text="Теперь введите варианты ответов...\n"
@@ -59,8 +59,8 @@ def state_2(message: telebot.types.Message):
     with bot.retrieve_data(message.from_user.id) as data:
         data['variants'] = message.text
     variants = data['variants'].split('\n')
-    for x in variants:
-        save_variants(x, admin_id)
+    for variant in variants:
+        save_variants(variant, admin_id)
     bot.send_message(message.from_user.id, text="Варианты ответов добавлены!")
     bot.delete_state(message.from_user.id, message.chat.id)
 
@@ -85,13 +85,13 @@ def state_1(message: telebot.types.Message):
         bot.send_message(message.from_user.id, text="Вы ввели не число!")
         bot.delete_state(message.from_user.id, message.chat.id)
     else:
-        n = int(data['num'])
-        if n <= 0 or len(poisk_quest(n)) == 0:
+        num_int = int(data['num'])
+        if num_int <= 0 or len(poisk_quest(num_int)) == 0:
             bot.send_message(message.from_user.id, text="Вопроса с таким номером не существует")
             bot.delete_state(message.from_user.id, message.chat.id)
         else:
-            delete_question(n)
-            bot.send_message(message.from_user.id, text=f"Вопрос {n} удален")
+            delete_question(num_int)
+            bot.send_message(message.from_user.id, text=f"Вопрос {num_int} удален")
             bot.delete_state(message.from_user.id, message.chat.id)
 
 
@@ -102,13 +102,13 @@ def begin(message: telebot.types.Message):
     if len(questions) == 0:
         bot.send_message(message.from_user.id, text="Вопросов пока нет")
     else:
-        question = random.choice(questions)
-        q = get_question(question)
-        variants = get_variants(question[0])
-        text = f"{question[0]}) {q[0]}\n"
+        rand_question = random.choice(questions)
+        question = get_question(rand_question)
+        variants = get_variants(rand_question[0])
+        text = f"{rand_question[0]}) {question[0]}\n"
         markup = InlineKeyboardMarkup()
-        for x in variants:
-            markup.add(InlineKeyboardButton(text=f"{x[0]}", callback_data=f"{x[1]}"))
+        for var in variants:
+            markup.add(InlineKeyboardButton(text=f"{var[0]}", callback_data=f"{var[1]}"))
         bot.send_message(message.from_user.id, text=text, reply_markup=markup)
 
 
@@ -118,7 +118,7 @@ def call_b(call: telebot.types.CallbackQuery):
     update_votes(choice_id)
     update_statistic(choice_id, int(call.from_user.id))
     bot.delete_message(call.message.chat.id, call.message.message_id)
-    bot.send_message(call.from_user.id, text=f"Ответ учтён!")
+    bot.send_message(call.from_user.id, text="Ответ учтён!")
 
 
 @bot.message_handler(commands=['my_statistic'])
@@ -144,11 +144,11 @@ def statistic_1(message: telebot.types.Message):
     else:
         arr = []
         questions, votes = total_statistic()
-        for x in questions:
-            arr.append(f"{x[0]}) {x[1]}\n")
-            for j in votes:
-                if x[0] == j[0]:
-                    arr.append(f"    {j[1]} — {j[2]}\n")
+        for question in questions:
+            arr.append(f"{question[0]}) {question[1]}\n")
+            for vote in votes:
+                if question[0] == vote[0]:
+                    arr.append(f"    {vote[1]} — {vote[2]}\n")
             arr.append("\n")
         text = "".join(arr)
         if text == "":

@@ -49,10 +49,10 @@ def create_tables() -> None:
     conn.close()
 
 
-def poisk_quest(id) -> list:
+def poisk_quest(question_id) -> list:
     conn = connection_to_db()
     with conn.cursor() as cursor:
-        cursor.execute("SELECT id FROM questions WHERE id = (%s)", (id, ))
+        cursor.execute("SELECT id FROM questions WHERE id = (%s)", (question_id, ))
         result = cursor.fetchall()
     return result
 
@@ -83,7 +83,8 @@ def save_variants(choice_text: str, admin_id) -> None:
         result = cursor.fetchone()
     question_id = result[0]
     with conn.cursor() as cursor:
-        cursor.execute("INSERT INTO choices (text, votes, question_id) VALUES ((%s), (%s), (%s))", (choice_text, 0, question_id))
+        cursor.execute("INSERT INTO choices (text, votes, question_id) "
+                       "VALUES ((%s), (%s), (%s))", (choice_text, 0, question_id))
     conn.commit()
     conn.close()
 

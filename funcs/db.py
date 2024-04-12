@@ -147,7 +147,7 @@ def get_questions(user_id) -> list:
     return result
 
 
-def get_question(question_id) -> list:
+def get_question(question_id):
     conn = connection_to_db()
     with conn.cursor() as cursor:
         cursor.execute("SELECT question_text FROM questions WHERE id = (%s)", (question_id, ))

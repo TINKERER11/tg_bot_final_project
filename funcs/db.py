@@ -24,7 +24,7 @@ def create_tables() -> None:
         CREATE TABLE IF NOT EXISTS questions (
     	    id BIGSERIAL PRIMARY KEY,
     	    question_text VARCHAR,
-    	    publish_date TIME WITHOUT TIME ZONE,
+    	    publish_date TIMESTAMP WITHOUT TIME ZONE,
     	    admin_id BIGINT,
     	    FOREIGN KEY (admin_id) REFERENCES admins (user_id)
         );""")

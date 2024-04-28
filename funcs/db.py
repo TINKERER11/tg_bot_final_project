@@ -108,7 +108,6 @@ def get_my_statistic(user_id):
         JOIN choices ON total_statistic.choice_id = choices.id
         WHERE total_statistic.user_id = (%s)""", (user_id, ))
         result = cursor.fetchall()
-    print(result)
     return result
 
 

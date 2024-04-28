@@ -124,10 +124,10 @@ def call_b(call: telebot.types.CallbackQuery):
 @bot.message_handler(commands=['my_statistic'])
 def statistic(message: telebot.types.Message):
     user_id = int(message.from_user.id)
-    questions, choices = get_my_statistic(user_id)
+    my_stat = get_my_statistic(user_id)
     arr = []
-    for i in range(len(questions)):
-        arr.append(f"{questions[i][0]}\nВаш ответ — {choices[i][0]}\n\n")
+    for x in my_stat:
+        arr.append(f"{x[0]}\nВаш ответ — {x[1]}\n\n")
     text = "\n".join(arr)
     if len(text) == 0:
         bot.send_message(message.from_user.id, text="Статистика пустая")

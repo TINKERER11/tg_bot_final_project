@@ -101,21 +101,15 @@ def delete_question(question_id) -> None:
 
 def get_my_statistic(user_id):
     conn = connection_to_db()
-    res, res1 = [], []
     with conn.cursor() as cursor:
-        cursor.execute("SELECT question_id, choice_id FROM total_statistic WHERE user_id = (%s)", (user_id, ))
+        cursor.execute("""
+        SELECT questions.question_text, choices.text FROM total_statistic
+        JOIN questions ON total_statistic.question_id = questions.id
+        JOIN choices ON total_statistic.choice_id = choices.id
+        WHERE total_statistic.user_id = (%s)""", (user_id, ))
         result = cursor.fetchall()
-    with conn.cursor() as cursor:
-        for question_id in result:
-            cursor.execute("SELECT question_text FROM questions WHERE id = (%s)", (question_id[0], ))
-            res.extend(cursor.fetchall())
-    with conn.cursor() as cursor:
-        for choice_id in result:
-            cursor.execute("SELECT text FROM choices WHERE id = (%s)", (choice_id[1], ))
-            res1.extend(cursor.fetchall())
-    conn.commit()
-    conn.close()
-    return res, res1
+    print(result)
+    return result
 
 
 def total_statistic():

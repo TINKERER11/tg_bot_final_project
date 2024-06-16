@@ -28,7 +28,7 @@ def start(message: telebot.types.Message):
 
 @bot.message_handler(commands=['add_question'])
 def create_quiz(message: telebot.types.Message):
-    user_id = int(message.from_user.id)
+    user_id = str(message.from_user.id)
     if len(prov_admin(user_id)) == 0:
         bot.send_message(message.from_user.id, text="У вас <b>нет доступа к этой команде</b>!\n"
                                                     "Вы <u>не администратор</u>!!!", parse_mode='HTML')
@@ -43,7 +43,7 @@ def state(message: telebot.types.Message):
         data['new_quest'] = message.text
     new_quest = data['new_quest']
     now_date = datetime.now()
-    admin_id = int(message.from_user.id)
+    admin_id = str(message.from_user.id)
     save_question(question_text=new_quest, admin_id=admin_id, date=now_date)
     bot.send_message(message.from_user.id, text="Вопрос добавился!")
     time.sleep(1)
@@ -55,7 +55,7 @@ def state(message: telebot.types.Message):
 
 @bot.message_handler(state=UserState.variants)
 def state_2(message: telebot.types.Message):
-    admin_id = int(message.from_user.id)
+    admin_id = str(message.from_user.id)
     with bot.retrieve_data(message.from_user.id) as data:
         data['variants'] = message.text
     variants = data['variants'].split('\n')
@@ -67,7 +67,7 @@ def state_2(message: telebot.types.Message):
 
 @bot.message_handler(commands=['delete_question'])
 def delete_quiz(message: telebot.types.Message):
-    user_id = int(message.from_user.id)
+    user_id = str(message.from_user.id)
     if len(prov_admin(user_id)) == 0:
         bot.send_message(message.from_user.id, text="У вас <b>нет доступа к этой команде</b>!\n"
                                                     "Вы <u>не администратор</u>!!!", parse_mode='HTML')
@@ -97,7 +97,7 @@ def state_1(message: telebot.types.Message):
 
 @bot.message_handler(commands=['get_question'])
 def begin(message: telebot.types.Message):
-    user_id = int(message.from_user.id)
+    user_id = str(message.from_user.id)
     questions = get_questions(user_id)
     if len(questions) == 0:
         bot.send_message(message.from_user.id, text="Вопросов пока нет")
@@ -116,14 +116,14 @@ def begin(message: telebot.types.Message):
 def call_b(call: telebot.types.CallbackQuery):
     choice_id = int(call.data)
     update_votes(choice_id)
-    update_statistic(choice_id, int(call.from_user.id))
+    update_statistic(choice_id, str(call.from_user.id))
     bot.delete_message(call.message.chat.id, call.message.message_id)
     bot.send_message(call.from_user.id, text="Ответ учтён!")
 
 
 @bot.message_handler(commands=['my_statistic'])
 def statistic(message: telebot.types.Message):
-    user_id = int(message.from_user.id)
+    user_id = str(message.from_user.id)
     my_stat = get_my_statistic(user_id)
     arr = []
     for x in my_stat:
@@ -137,7 +137,7 @@ def statistic(message: telebot.types.Message):
 
 @bot.message_handler(commands=['total_statistic'])
 def statistic_1(message: telebot.types.Message):
-    user_id = int(message.from_user.id)
+    user_id = str(message.from_user.id)
     if len(prov_admin(user_id)) == 0:
         bot.send_message(message.from_user.id, text="У вас <b>нет доступа к этой команде</b>!\n"
                                                     "Вы <u>не администратор</u>!!!", parse_mode='HTML')

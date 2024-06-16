@@ -17,21 +17,21 @@ def create_tables() -> None:
     with conn.cursor() as cursor:
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS admins (
-    	    user_id BIGINT PRIMARY KEY,
-    	    user_name VARCHAR
+    	    user_id TEXT PRIMARY KEY,
+    	    user_name TEXT
         );""")
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS questions (
     	    id BIGSERIAL PRIMARY KEY,
-    	    question_text VARCHAR,
+    	    question_text TEXT,
     	    publish_date TIMESTAMP WITHOUT TIME ZONE,
-    	    admin_id BIGINT,
+    	    admin_id TEXT,
     	    FOREIGN KEY (admin_id) REFERENCES admins (user_id)
         );""")
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS choices (
     	    id BIGSERIAL PRIMARY KEY,
-    	    text VARCHAR,
+    	    text TEXT,
     	    votes BIGINT,
     	    question_id BIGINT,
     	    FOREIGN KEY (question_id) REFERENCES questions (id)
@@ -39,7 +39,7 @@ def create_tables() -> None:
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS total_statistic (
     	    id BIGSERIAL PRIMARY KEY,
-    	    user_id BIGINT,
+    	    user_id TEXT,
     	    question_id BIGINT,
     	    choice_id BIGINT,
     	    FOREIGN KEY (question_id) REFERENCES questions (id),
@@ -57,7 +57,7 @@ def poisk_quest(question_id) -> list:
     return result
 
 
-def prov_admin(user_id: int) -> list:
+def prov_admin(user_id: str) -> list:
     conn = connection_to_db()
     with conn.cursor() as cursor:
         cursor.execute("SELECT * FROM admins WHERE user_id = (%s);", (user_id, ))
@@ -67,7 +67,7 @@ def prov_admin(user_id: int) -> list:
     return result
 
 
-def save_question(question_text: str, admin_id, date) -> None:
+def save_question(question_text: str, admin_id: str, date) -> None:
     conn = connection_to_db()
     with conn.cursor() as cursor:
         cursor.execute("INSERT INTO questions (question_text, admin_id, publish_date) "
@@ -76,7 +76,7 @@ def save_question(question_text: str, admin_id, date) -> None:
     conn.close()
 
 
-def save_variants(choice_text: str, admin_id) -> None:
+def save_variants(choice_text: str, admin_id: str) -> None:
     conn = connection_to_db()
     with conn.cursor() as cursor:
         cursor.execute("SELECT max(id) from questions WHERE admin_id = (%s);", (admin_id, ))

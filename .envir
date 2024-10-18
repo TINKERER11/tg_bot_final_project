@@ -1,0 +1,3 @@
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=yfhmzy03
+POSTGRES_DB=access_bars
